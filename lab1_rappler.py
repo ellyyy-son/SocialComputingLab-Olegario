@@ -54,28 +54,53 @@ def extract_article_data(link):
   doc_details = [title, date, link, text]                                             
   return doc_details
 
-def query_results(query):
-  search = query
-  mother_url = f"https://www.rappler.com/?q={search}#gsc.tab=0&gsc.q={search}&gsc.page="
-  page = 1
-  page_limit = 5
-  corpus = pd.DataFrame(columns=['title', 'link', 'date_published', 'text'])
+mother_url = "https://www.rappler.com/wp-json/rappler/v1/ontology-topics/2653920/latest-news?page="
+page = 1
+page_limit = 5
+corpus = pd.DataFrame(columns=['title', 'link', 'date_published', 'text'])
+
+while True:
   page_str = str(page)
   page_url = mother_url + page_str
   print('Working on ' + page_url)
 
   time.sleep(random.randint(1, 5))
-  
+
   page_r = requests.get(page_url, headers=headers)
-  print(page_r)
   page_soup = BeautifulSoup(page_r.content, 'html.parser')
-  print(page_soup)
-  print(page_soup.title.text.strip())
-  articles = page_soup.find_all(
-    'div',  # HTML element tag
-    {
-        'class': 'gs-title'
-    }  # HTML attribute
-    )
-  print(articles)
-print(query_results('bini'))
+
+  article_container = page_soup.find('div', {'id': 'ontology-topic-latest-news-container'})
+  if article_container is None:
+    continue
+
+  article_previews = article_container.find_all('article')
+  print(article_previews)
+  number_of_articles = len(article_previews)
+  print(number_of_articles)
+
+  if number_of_articles < 1:
+    print('Extraction Finished!')
+    break
+
+  for article_id in range(number_of_articles):
+    article = article_previews[article_id]
+    article_title = article.find("h3")
+
+    if article_title is None:
+      continue
+
+    try:
+      tmp = extract_article_data(article_title.find("a")['href'])
+      print(tmp)
+      corpus.loc[len(corpus)] = tmp
+    except:
+      continue
+
+  if page >= page_limit:
+    break
+
+  page += 1
+
+file_name = 'rappler_corpus.xlsx'
+corpus.to_excel(file_name)
+print(f'File saved to {file_name}')
