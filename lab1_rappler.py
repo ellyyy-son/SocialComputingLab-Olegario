@@ -35,6 +35,7 @@ def extract_article_data(link):
   doc_details = [title, date, link, text]                                             
   return doc_details
 
+#Retrieve Articles from Leni Robredo's People Page
 mother_url = "https://www.rappler.com/wp-json/rappler/v1/ontology-topics/2653920/latest-news?page="
 page = 1
 page_limit = 5
