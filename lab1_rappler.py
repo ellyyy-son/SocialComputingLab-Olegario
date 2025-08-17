@@ -70,7 +70,7 @@ while page <= page_limit:
 
   page += 1
 
-file_name = 'rappler_corpus.xlsx'
+file_name = 'leni_rappler.xlsx'
 
 rappler_corpus.to_excel(file_name)
 print(f'File saved to {file_name}')
