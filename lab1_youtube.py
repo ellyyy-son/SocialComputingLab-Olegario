@@ -59,10 +59,8 @@ def extract_youtube_comments(video_id):
           parentId=parent_id
         ).execute()
 
-        # iterate through the replies
         for reply in replies['items']:
-          # extract text from each reply
-          # append reply to list of comments
+
           replyBody = reply['snippet']
           comments.append([
             video_publishedAt,
@@ -78,16 +76,11 @@ def extract_youtube_comments(video_id):
             replyBody['parentId']
           ])
 
-    ##### Next Page #####
-    # print number of comments
     print(str(len(comments)) + ' comments in list')
 
-    # if there is a next page to the comment result
     if 'nextPageToken' in comment_response:
-      # notify that next page has been found
       print('Next comment page found. Now extracting data. \n')
 
-      # get the next page
       comment_response = youtube.commentThreads().list(
         videoId=video_id, part='snippet,replies', maxResults=50,
         order='time', pageToken=comment_response['nextPageToken'],
