@@ -14,7 +14,7 @@ headers = {
 }
 
 rappler = pd.DataFrame(
-    columns=['title', 'link', 'date_published', 'text']
+    columns=['title', 'link', 'date_published', 'text', 'related_topics']
 )
 
 def extract_article_data(link):
@@ -32,14 +32,19 @@ def extract_article_data(link):
     untagged_line = line.get_text()
     text += untagged_line + '\n'
 
-  doc_details = [title, date, link, text]                                             
+  related_topics = ''
+  extracted_topics = soup.find("div", {"class": "related-topics-links"})
+  for topic in extracted_topics:
+    related_topics += ' ' + topic.get_text()
+
+  doc_details = [title, date, link, text, related_topics]                                             
   return doc_details
 
 #Retrieve Articles from Leni Robredo's People Page
 mother_url = "https://www.rappler.com/wp-json/rappler/v1/ontology-topics/2653920/latest-news?page="
 page = 1
 page_limit = 5
-rappler_corpus = pd.DataFrame(columns=['title', 'link', 'date_published', 'text'])
+rappler_corpus = pd.DataFrame(columns=['title', 'link', 'date_published', 'text', 'related_topics'])
 
 while page <= page_limit:
   page_str = str(page)
