@@ -52,7 +52,6 @@ while page <= page_limit:
   page_soup = page_r.json()
 
   number_of_articles = len(page_soup)
-  print(number_of_articles)
 
   for article in page_soup:
     if article.get('title') is None:
